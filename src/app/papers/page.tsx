@@ -1,16 +1,21 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export default async function PapersPage() {
-  const papers = await prisma.paper.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      explanations: true,
-      comments: true
+  // Demo data - backend not yet deployed
+  const papers = [
+    {
+      id: 1,
+      title: "Quantum Machine Learning: An Overview",
+      abstract: "A comprehensive overview of quantum machine learning algorithms and their applications.",
+      url: "https://arxiv.org/abs/2103.15027",
+      arxivId: "2103.15027",
+      createdAt: new Date("2024-01-15"),
+      explanations: [],
+      comments: []
     }
-  });
+  ];
 
   return (
     <main className="bg-background px-4 py-12">

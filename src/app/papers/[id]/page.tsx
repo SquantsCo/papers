@@ -1,10 +1,42 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { PaperComments } from "./paper-comments";
 
 interface PaperPageProps {
   params: { id: string };
+}
+
+interface Explanation {
+  id: number;
+  authorName: string | null;
+  summary: string;
+  intuition: string;
+  technical: string | null;
+  codeUrl: string | null;
+  createdAt?: Date;
+}
+
+interface DemoPaper {
+  id: number;
+  title: string;
+  abstract: string;
+  url: string;
+  arxivId: string;
+  submittedBy: string | null;
+  summary: string;
+  intuition: string;
+  technical: string;
+  codeUrl: string | null;
+  createdAt: Date;
+  explanations: Explanation[];
+  comments: Comment[];
+}
+
+interface Comment {
+  id: number;
+  authorName: string | null;
+  content: string;
+  createdAt: Date | string;
 }
 
 export default async function PaperPage({ params }: PaperPageProps) {
@@ -13,21 +45,26 @@ export default async function PaperPage({ params }: PaperPageProps) {
     notFound();
   }
 
-  const paper = await prisma.paper.findUnique({
-    where: { id },
-    include: {
-      explanations: {
-        orderBy: { createdAt: "asc" }
-      },
-      comments: {
-        orderBy: { createdAt: "asc" }
-      }
-    }
-  });
-
-  if (!paper) {
+  // Demo data - backend not yet deployed
+  if (id !== 1) {
     notFound();
   }
+
+  const paper: DemoPaper = {
+    id: 1,
+    title: "Quantum Machine Learning: An Overview",
+    abstract: "A comprehensive overview of quantum machine learning algorithms and their applications.",
+    url: "https://arxiv.org/abs/2103.15027",
+    arxivId: "2103.15027",
+    submittedBy: "Demo Author",
+    summary: "This paper provides a comprehensive overview of quantum machine learning, discussing various quantum algorithms that can be applied to machine learning tasks.",
+    intuition: "Quantum computers can process information in fundamentally different ways than classical computers, enabling faster solutions to certain machine learning problems.",
+    technical: "The paper discusses variational quantum algorithms (VQA), quantum neural networks, and their implementation on NISQ devices.",
+    codeUrl: "https://github.com/example/qml",
+    createdAt: new Date("2024-01-15"),
+    explanations: [],
+    comments: []
+  };
 
   return (
     <main className="bg-background px-4 py-12">
@@ -132,9 +169,11 @@ export default async function PaperPage({ params }: PaperPageProps) {
                       </p>
                     )}
                   </div>
-                  <p className="text-[11px] text-slate-400">
-                    Added on {exp.createdAt.toLocaleDateString()}
-                  </p>
+                  {exp.createdAt && (
+                    <p className="text-[11px] text-slate-400">
+                      Added on {exp.createdAt.toLocaleDateString()}
+                    </p>
+                  )}
                 </article>
               ))}
             </div>
