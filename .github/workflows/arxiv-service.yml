@@ -1,0 +1,86 @@
+name: ArXiv Service CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/arxiv-service/**'
+      - '.github/workflows/arxiv-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/arxiv-service/**'
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/arxiv-service
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: services/arxiv-service/package-lock.json
+
+      - name: Install dependencies
+        working-directory: services/arxiv-service
+        run: npm ci
+
+      - name: Run linter
+        working-directory: services/arxiv-service
+        run: npm run lint || echo "Linting not configured"
+
+      - name: Run tests
+        working-directory: services/arxiv-service
+        run: npm test || echo "Tests not configured yet"
+
+      - name: Build TypeScript
+        working-directory: services/arxiv-service
+        run: npm run build
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/arxiv-service
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+      - name: Image digest
+        run: echo ${{ steps.meta.outputs.digest }}

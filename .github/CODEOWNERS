@@ -1,0 +1,23 @@
+# Code Owners for Squants Papers
+# These owners will be automatically requested for review when someone opens a pull request
+
+# Global owners
+* @SquantsCo
+
+# Service-specific owners
+/services/api-gateway/ @SquantsCo
+/services/papers-service/ @SquantsCo
+/services/arxiv-service/ @SquantsCo
+/services/comments-service/ @SquantsCo
+
+# Infrastructure
+/k8s/ @SquantsCo
+/docker-compose.yml @SquantsCo
+/.github/workflows/ @SquantsCo
+
+# Frontend
+/src/ @SquantsCo
+/public/ @SquantsCo
+
+# Documentation
+*.md @SquantsCo

@@ -1,0 +1,57 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+env:
+  KUBE_NAMESPACE: staging
+
+jobs:
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_STAGING }}
+
+      - name: Create namespace if not exists
+        run: |
+          kubectl create namespace ${{ env.KUBE_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy PostgreSQL
+        run: |
+          kubectl apply -f k8s/postgres.yaml -n ${{ env.KUBE_NAMESPACE }}
+
+      - name: Deploy Redis
+        run: |
+          kubectl apply -f k8s/redis.yaml -n ${{ env.KUBE_NAMESPACE }}
+
+      - name: Wait for infrastructure
+        run: |
+          kubectl wait --for=condition=ready pod -l app=postgres -n ${{ env.KUBE_NAMESPACE }} --timeout=120s
+          kubectl wait --for=condition=ready pod -l app=redis -n ${{ env.KUBE_NAMESPACE }} --timeout=60s
+
+      - name: Deploy Services
+        run: |
+          kubectl apply -f k8s/papers-service.yaml -n ${{ env.KUBE_NAMESPACE }}
+          kubectl apply -f k8s/arxiv-service.yaml -n ${{ env.KUBE_NAMESPACE }}
+          kubectl apply -f k8s/comments-service.yaml -n ${{ env.KUBE_NAMESPACE }}
+          kubectl apply -f k8s/api-gateway.yaml -n ${{ env.KUBE_NAMESPACE }}
+          kubectl apply -f k8s/frontend.yaml -n ${{ env.KUBE_NAMESPACE }}
+
+      - name: Wait for deployments
+        run: |
+          kubectl wait --for=condition=available deployment --all -n ${{ env.KUBE_NAMESPACE }} --timeout=300s
+
+      - name: Get service URLs
+        run: |
+          echo "Staging deployment complete!"
+          kubectl get services -n ${{ env.KUBE_NAMESPACE }}
