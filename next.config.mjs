@@ -91,19 +91,21 @@ const nextConfig = {
         cacheGroups: {
           default: false,
           vendors: false,
-          // Vendor chunk
-          vendor: {
-            filename: 'chunks/vendor.js',
-            chunks: 'all',
-            test: /node_modules/,
-            priority: 40,
-          },
-          // React bundle
+          // React + Next.js bundle (higher priority)
           react: {
-            filename: 'chunks/react.js',
             test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
             chunks: 'all',
             priority: 50,
+            name: 'react-vendor',
+            enforce: true,
+          },
+          // Other vendors
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            chunks: 'all',
+            priority: 40,
+            name: 'vendor',
+            enforce: true,
           },
         },
       };

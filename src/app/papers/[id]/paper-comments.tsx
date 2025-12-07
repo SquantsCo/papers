@@ -6,7 +6,7 @@ type Comment = {
   id: number;
   authorName: string | null;
   content: string;
-  createdAt: string;
+  createdAt: Date | string;
 };
 
 interface PaperCommentsProps {

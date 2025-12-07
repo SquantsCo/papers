@@ -43,19 +43,16 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/screenshots/mobile-1.png',
         sizes: '540x720',
         type: 'image/png',
-        form_factor: 'narrow',
       },
       {
         src: '/screenshots/mobile-2.png',
         sizes: '540x720',
         type: 'image/png',
-        form_factor: 'narrow',
       },
       {
         src: '/screenshots/desktop-1.png',
         sizes: '1280x720',
         type: 'image/png',
-        form_factor: 'wide',
       },
     ],
     shortcuts: [
