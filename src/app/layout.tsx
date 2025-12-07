@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SiteLayout } from "@/components/Layout";
+import { AuthSessionProvider } from "@/components/AuthSessionProvider";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -98,7 +99,9 @@ export default function RootLayout({
         }} />
       </head>
       <body>
-        <SiteLayout>{children}</SiteLayout>
+        <AuthSessionProvider>
+          <SiteLayout>{children}</SiteLayout>
+        </AuthSessionProvider>
       </body>
     </html>
   );

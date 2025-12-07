@@ -7,6 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  username           String    @unique
+  password           String?   // null for OAuth users
+  firstName          String?
+  lastName           String?
+  profilePhoto       String?   // URL to profile photo
+  bio                String?   // Short description/status
+  emailVerified      Boolean   @default(false)
+  emailVerificationToken String? @unique
+  emailVerificationExpires DateTime?
+  authProvider       String    @default("email") // "email", "google", "microsoft"
+  googleId           String?   @unique
+  microsoftId        String?   @unique
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  papers             Paper[]
+  explanations       Explanation[]
+  comments           Comment[]
+  sessions           Session[]
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  
+  @@index([userId])
+}
+
 model Paper {
   id           Int       @id @default(autoincrement())
   arxivId      String?
@@ -15,28 +48,42 @@ model Paper {
   url          String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  submittedBy  String?   // optional name or email (later link to user)
+  submittedBy  String?   // Keep for backward compatibility
+  submittedByUserId String? // Link to user
+  submittedByUser User?   @relation(fields: [submittedByUserId], references: [id], onDelete: SetNull)
   explanations Explanation[]
   comments     Comment[]
+  
+  @@index([submittedByUserId])
 }
 
 model Explanation {
   id          Int      @id @default(autoincrement())
-  paper       Paper    @relation(fields: [paperId], references: [id])
+  paper       Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
   paperId     Int
-  authorName  String?
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorName  String?  // Keep for backward compatibility
   summary     String   // high-level overview
   intuition   String   // conceptual explanation
   technical   String?  // optional technical notes
   codeUrl     String?  // optional GitHub link
   createdAt   DateTime @default(now())
+  
+  @@index([paperId])
+  @@index([authorId])
 }
 
 model Comment {
   id         Int      @id @default(autoincrement())
-  paper      Paper    @relation(fields: [paperId], references: [id])
+  paper      Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
   paperId    Int
-  authorName String?
+  authorId   String?
+  author     User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorName String?  // Keep for backward compatibility
   content    String
   createdAt  DateTime @default(now())
+  
+  @@index([paperId])
+  @@index([authorId])
 }
