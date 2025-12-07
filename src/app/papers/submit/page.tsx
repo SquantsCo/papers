@@ -111,8 +111,8 @@ export default function SubmitPaperPage() {
 
   return (
     <main className="bg-background px-4 py-12">
-      <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h1 className="mb-2 text-2xl font-semibold text-slate-900">
+      <div className="mx-auto max-w-3xl rounded-2xl border-2 border-primary-300 bg-white p-5 shadow-md">
+        <h1 className="mb-2 text-2xl font-semibold bg-gradient-to-r from-primary-700 to-primary-900 bg-clip-text text-transparent">
           Submit a paper explainer
         </h1>
         <p className="mb-4 text-sm text-slate-600">
@@ -122,8 +122,8 @@ export default function SubmitPaperPage() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <p className="mb-2 text-xs font-medium text-slate-700">
+          <div className="rounded-xl border-2 border-primary-200 bg-primary-50 p-3">
+            <p className="mb-2 text-xs font-medium text-primary-900">
               1. Fetch from arXiv (optional but recommended)
             </p>
             <div className="flex flex-col gap-2 md:flex-row">
@@ -132,13 +132,13 @@ export default function SubmitPaperPage() {
                 placeholder="arXiv ID or URL (e.g. 2010.12345 or https://arxiv.org/abs/2010.12345)"
                 value={arxivInput}
                 onChange={(e) => setArxivInput(e.target.value)}
-                className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="flex-1 rounded-xl border-2 border-primary-300 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300"
               />
               <button
                 type="button"
                 onClick={handleFetchFromArxiv}
                 disabled={loading}
-                className="rounded-full bg-primary-500 px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-primary-300"
+                className="rounded-full bg-gradient-to-r from-primary-700 to-primary-900 px-4 py-2 text-xs font-medium text-white shadow-md hover:from-primary-800 hover:to-primary-800 disabled:cursor-not-allowed disabled:from-primary-500 disabled:to-primary-500 transition-all"
               >
                 {loading ? "Fetching..." : "Fetch from arXiv"}
               </button>
@@ -149,7 +149,7 @@ export default function SubmitPaperPage() {
           </div>
 
           <div>
-            <p className="mb-1 text-xs font-medium text-slate-700">
+            <p className="mb-1 text-xs font-medium text-primary-900\">
               2. Paper details
             </p>
             <div className="space-y-2">
@@ -158,26 +158,26 @@ export default function SubmitPaperPage() {
                 placeholder="Paper title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="w-full rounded-xl border-2 border-primary-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300 transition-colors"
               />
               <textarea
                 placeholder="Abstract (you can lightly edit to make it readable)"
                 value={abstractText}
                 onChange={(e) => setAbstractText(e.target.value)}
-                className="h-28 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="h-28 w-full rounded-xl border-2 border-primary-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300 transition-colors"
               />
               <input
                 type="url"
                 placeholder="Original paper URL (arXiv or publisher)"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="w-full rounded-xl border-2 border-primary-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <p className="mb-1 text-xs font-medium text-slate-700">
+            <p className="mb-1 text-xs font-medium text-primary-900\">
               3. Your explainer
             </p>
             <div className="space-y-2">
@@ -186,32 +186,32 @@ export default function SubmitPaperPage() {
                 placeholder="Your name or handle (optional)"
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="w-full rounded-xl border-2 border-primary-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300 transition-colors"
               />
               <textarea
                 placeholder="Summary – what is this paper about, in a few short paragraphs?"
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
-                className="h-28 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="h-28 w-full rounded-xl border-2 border-primary-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300 transition-colors"
               />
               <textarea
                 placeholder="Intuition – how can a reasonably informed student understand the main idea?"
                 value={intuition}
                 onChange={(e) => setIntuition(e.target.value)}
-                className="h-28 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="h-28 w-full rounded-xl border-2 border-primary-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300 transition-colors"
               />
               <textarea
                 placeholder="Technical notes (optional) – derivations, caveats, or important math details."
                 value={technical}
                 onChange={(e) => setTechnical(e.target.value)}
-                className="h-24 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="h-24 w-full rounded-xl border-2 border-primary-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300 transition-colors"
               />
               <input
                 type="url"
                 placeholder="Code URL (optional, e.g. GitHub repo implementing this paper)"
                 value={codeUrl}
                 onChange={(e) => setCodeUrl(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                className="w-full rounded-xl border-2 border-primary-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-300 transition-colors"
               />
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function SubmitPaperPage() {
           <button
             type="submit"
             disabled={loading}
-            className="rounded-full bg-primary-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-primary-300"
+            className="rounded-full bg-gradient-to-r from-primary-700 to-primary-900 px-4 py-2 text-sm font-medium text-white shadow-md hover:from-primary-800 hover:to-primary-800 disabled:cursor-not-allowed disabled:from-primary-500 disabled:to-primary-500 transition-all"
           >
             {loading ? "Submitting..." : "Submit explainer"}
           </button>

@@ -30,7 +30,7 @@ export default async function PapersPage() {
           </div>
           <Link
             href="/papers/submit"
-            className="rounded-full bg-primary-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-600"
+            className="rounded-full bg-gradient-to-r from-primary-700 to-primary-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:from-primary-800 hover:to-primary-800 transition-all"
           >
             Submit a paper explainer
           </Link>
@@ -39,7 +39,7 @@ export default async function PapersPage() {
         {papers.length === 0 ? (
           <p className="mt-8 text-sm text-slate-600">
             No papers have been added yet. Be the first to{" "}
-            <Link href="/papers/submit" className="text-primary-600 underline">
+            <Link href="/papers/submit" className="font-medium text-primary-700 hover:text-primary-900 underline">
               submit an explainer
             </Link>
             .
@@ -50,13 +50,13 @@ export default async function PapersPage() {
               <Link
                 key={paper.id}
                 href={`/papers/${paper.id}`}
-                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-primary-300"
+                className="rounded-2xl border-2 border-primary-200 bg-white p-4 shadow-sm hover:border-primary-400 hover:shadow-md transition-all"
               >
                 <div className="mb-1 flex items-center justify-between gap-2">
                   <h2 className="text-sm font-semibold text-slate-900 md:text-base">
                     {paper.title}
                   </h2>
-                  <span className="rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-medium text-primary-700">
+                  <span className="rounded-full bg-gradient-to-r from-primary-100 to-primary-50 px-2 py-0.5 text-[11px] font-medium text-primary-800">
                     {paper.explanations.length} explainer
                     {paper.explanations.length === 1 ? "" : "s"}
                   </span>
@@ -66,7 +66,7 @@ export default async function PapersPage() {
                 </p>
                 <div className="flex items-center gap-3 text-[11px] text-slate-500">
                   {paper.arxivId && (
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5">
+                    <span className="rounded-full bg-primary-100 px-2 py-0.5 text-primary-700 font-medium">
                       arXiv: {paper.arxivId}
                     </span>
                   )}

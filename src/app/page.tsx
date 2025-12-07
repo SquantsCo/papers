@@ -3,15 +3,15 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <main className="bg-background">
-      <section className="border-b border-slate-200 bg-surface">
+      <section className="border-b-2 border-primary-300 bg-surface">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:py-20">
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-primary-500">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-primary-700">
               Quantum · Papers · Community
             </p>
             <h1 className="mb-4 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl lg:text-5xl">
               A hub for{" "}
-              <span className="text-primary-600">
+              <span className="bg-gradient-to-r from-primary-700 to-primary-900 bg-clip-text text-transparent">
                 quantum papers & beginner pathways.
               </span>
             </h1>
@@ -24,13 +24,13 @@ export default function HomePage() {
             <div className="mb-4 flex flex-wrap gap-3">
               <Link
                 href="/papers"
-                className="rounded-full bg-primary-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-600"
+                className="rounded-full bg-gradient-to-r from-primary-700 to-primary-900 px-4 py-2 text-sm font-medium text-white shadow-md hover:from-primary-800 hover:to-primary-800 transition-all"
               >
                 Browse explained papers
               </Link>
               <Link
                 href="/papers/submit"
-                className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:border-primary-400 hover:text-primary-600"
+                className="rounded-full border-2 border-primary-700 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-50 hover:border-primary-900 transition-all"
               >
                 Submit your explainer
               </Link>

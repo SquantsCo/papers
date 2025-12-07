@@ -71,7 +71,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
       <div className="mx-auto max-w-5xl">
         <Link
           href="/papers"
-          className="mb-4 inline-flex text-xs text-slate-500 hover:text-primary-600"
+          className="mb-4 inline-flex text-xs text-primary-700 hover:text-primary-900 font-medium transition-colors"
         >
           ← Back to papers
         </Link>
@@ -82,7 +82,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
               {paper.title}
             </h1>
             {paper.arxivId && (
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-700">
+              <span className="rounded-full bg-gradient-to-r from-primary-100 to-primary-50 px-2 py-0.5 text-[11px] font-medium text-primary-800">
                 arXiv: {paper.arxivId}
               </span>
             )}
@@ -98,7 +98,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
             href={paper.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-medium text-primary-600 underline"
+            className="text-xs font-medium text-primary-700 hover:text-primary-900 underline transition-colors"
           >
             View original paper →
           </a>
@@ -122,7 +122,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
               {paper.explanations.map((exp) => (
                 <article
                   key={exp.id}
-                  className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+                  className="rounded-2xl border-2 border-primary-200 bg-white p-4 shadow-sm hover:border-primary-300 transition-colors"
                 >
                   <div className="mb-2 flex items-center justify-between gap-2">
                     <h3 className="text-sm font-semibold text-slate-900">
