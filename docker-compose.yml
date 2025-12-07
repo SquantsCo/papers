@@ -1,0 +1,160 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: squants-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: squants
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - squants-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: squants-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - squants-network
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: squants-api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      JWT_EXPIRES_IN: 24h
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PAPERS_SERVICE_URL: http://papers-service:4001
+      ARXIV_SERVICE_URL: http://arxiv-service:4002
+      COMMENTS_SERVICE_URL: http://comments-service:4003
+      CORS_ORIGIN: http://localhost:3001
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX_REQUESTS: 100
+    depends_on:
+      redis:
+        condition: service_healthy
+      papers-service:
+        condition: service_healthy
+      arxiv-service:
+        condition: service_healthy
+      comments-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - squants-network
+
+  # Papers Service
+  papers-service:
+    build:
+      context: ./services/papers-service
+      dockerfile: Dockerfile
+    container_name: squants-papers-service
+    environment:
+      NODE_ENV: production
+      PORT: 4001
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/papers_db?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CACHE_TTL: 3600
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - squants-network
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"
+
+  # ArXiv Service
+  arxiv-service:
+    build:
+      context: ./services/arxiv-service
+      dockerfile: Dockerfile
+    container_name: squants-arxiv-service
+    environment:
+      NODE_ENV: production
+      PORT: 4002
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CACHE_TTL: 7200
+      ARXIV_API_URL: https://export.arxiv.org/api/query
+      USER_AGENT: SquantsPapers/1.0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - squants-network
+
+  # Comments Service
+  comments-service:
+    build:
+      context: ./services/comments-service
+      dockerfile: Dockerfile
+    container_name: squants-comments-service
+    environment:
+      NODE_ENV: production
+      PORT: 4003
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/comments_db?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - squants-network
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: squants-frontend
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+    networks:
+      - squants-network
+
+networks:
+  squants-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

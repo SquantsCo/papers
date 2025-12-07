@@ -1,0 +1,93 @@
+# Comments Service Deployment and Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comments-service
+  labels:
+    app: comments-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: comments-service
+  template:
+    metadata:
+      labels:
+        app: comments-service
+    spec:
+      initContainers:
+      - name: migrate
+        image: squants/comments-service:latest
+        command: ['npx', 'prisma', 'migrate', 'deploy']
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: squants-secrets
+              key: comments-db-url
+      containers:
+      - name: comments-service
+        image: squants/comments-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4003
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "4003"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: squants-secrets
+              key: comments-db-url
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 4003
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 4003
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: comments-service
+spec:
+  selector:
+    app: comments-service
+  ports:
+  - port: 4003
+    targetPort: 4003
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: comments-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: comments-service
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

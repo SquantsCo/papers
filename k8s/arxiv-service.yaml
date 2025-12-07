@@ -1,0 +1,88 @@
+# ArXiv Service Deployment and Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arxiv-service
+  labels:
+    app: arxiv-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: arxiv-service
+  template:
+    metadata:
+      labels:
+        app: arxiv-service
+    spec:
+      containers:
+      - name: arxiv-service
+        image: squants/arxiv-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4002
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "4002"
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: CACHE_TTL
+          value: "7200"
+        - name: ARXIV_API_URL
+          value: "https://export.arxiv.org/api/query"
+        - name: USER_AGENT
+          value: "SquantsPapers/1.0"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 4002
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 4002
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arxiv-service
+spec:
+  selector:
+    app: arxiv-service
+  ports:
+  - port: 4002
+    targetPort: 4002
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: arxiv-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: arxiv-service
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

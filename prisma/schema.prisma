@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Paper {
+  id           Int       @id @default(autoincrement())
+  arxivId      String?
+  title        String
+  abstract     String
+  url          String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  submittedBy  String?   // optional name or email (later link to user)
+  explanations Explanation[]
+  comments     Comment[]
+}
+
+model Explanation {
+  id          Int      @id @default(autoincrement())
+  paper       Paper    @relation(fields: [paperId], references: [id])
+  paperId     Int
+  authorName  String?
+  summary     String   // high-level overview
+  intuition   String   // conceptual explanation
+  technical   String?  // optional technical notes
+  codeUrl     String?  // optional GitHub link
+  createdAt   DateTime @default(now())
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  paper      Paper    @relation(fields: [paperId], references: [id])
+  paperId    Int
+  authorName String?
+  content    String
+  createdAt  DateTime @default(now())
+}
