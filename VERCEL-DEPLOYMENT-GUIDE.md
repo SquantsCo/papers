@@ -168,69 +168,68 @@ Since your `package.json` is at `d:\squants\package.json`, this is correct.
 
 ---
 
-## 🔐 Step 4: Set Environment Variables
+## 🔐 Step 4: Set Environment Variables (Optional)
 
-This is **IMPORTANT** for your app to work.
+Environment variables configure your app settings.
 
-### 4.1 Click "Environment Variables"
+### 4.1 View Environment Variables Section
+
+You'll see:
 
 ```
 Environment Variables
-[Expand this section]
+
+Key                    Value              [−]
+NEXT_PUBLIC_API_URL    http://localhost:3000
+DATABASE_URL           [your-value]
+REDIS_URL              [your-value]
+JWT_SECRET             dev-secret-key-change-in-production
+
+[+ Add More]
 ```
 
-### 4.2 Add Variables One by One
+### 4.2 Review Current Variables
 
-For **Development**, add:
+The interface shows your current variables:
 
-```
-Name: NEXT_PUBLIC_API_URL
-Value: http://localhost:3000
+- **NEXT_PUBLIC_API_URL**: Where your API is located
+  - Currently: `http://localhost:3000` (development)
+  - Change to: `https://api.squants.com` when API is deployed
+  
+- **DATABASE_URL**: Database connection (optional for frontend)
+- **REDIS_URL**: Redis connection (optional for frontend)
+- **JWT_SECRET**: Secret key for authentication
 
-Name: DATABASE_URL
-Value: [leave blank or your dev database URL]
+### 4.3 Update Variables (Optional)
 
-Name: REDIS_URL
-Value: [leave blank or your dev Redis URL]
+To update a variable:
 
-Name: JWT_SECRET
-Value: dev-secret-key-change-in-production
-```
+1. Click on the **Value** field
+2. Edit the value
+3. Press **Enter** to save
 
-### 4.3 Change to Production Values
+To remove a variable:
 
-Click dropdown that says "Development" → Select "Production"
+1. Click the **minus (−)** button on the right
+2. Variable is deleted
 
-Add Production environment variables:
+To add a new variable:
 
-```
-Name: NEXT_PUBLIC_API_URL
-Value: https://api.squants.com
-Scope: Production
+1. Click **"+ Add More"** button
+2. Enter **Key** name
+3. Enter **Value**
+4. New variable is added
 
-Name: DATABASE_URL
-Value: postgresql://user:password@db.squants.com:5432/squants_prod
-Scope: Production
+### 4.4 For Frontend-Only Deployment
 
-Name: REDIS_URL
-Value: redis://redis.squants.com:6379
-Scope: Production
+You can safely:
 
-Name: JWT_SECRET
-Value: your-very-secure-production-secret-min-32-chars
-Scope: Production
-```
+- Remove: `DATABASE_URL` (frontend doesn't need it)
+- Remove: `REDIS_URL` (frontend doesn't need it)
+- Keep: `NEXT_PUBLIC_API_URL` (tells frontend where API is)
+- Keep: `JWT_SECRET` (for future use)
 
-### 4.4 Add Each Variable
-
-For each variable:
-
-1. Click **"Add New"** button
-2. Enter "Name" (e.g., `NEXT_PUBLIC_API_URL`)
-3. Enter "Value" (e.g., `https://api.squants.com`)
-4. Leave "Scope" as "Production"
-5. Click **"Save"**
-6. Repeat for next variable
+OR just keep everything as-is and deploy!
 
 ---
 
