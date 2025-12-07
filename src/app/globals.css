@@ -2,7 +2,197 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-first base styles */
+:root {
+  /* PWA theme colors */
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1e40af;
+  --color-surface: #ffffff;
+  --color-surface-dark: #1f2937;
+  --color-text: #1f2937;
+  --color-text-light: #6b7280;
+  
+  /* Safe area for notch devices */
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: #1f2937;
+    --color-text: #f3f4f6;
+    --color-text-light: #d1d5db;
+  }
+}
+
+/* Mobile-safe HTML */
+html {
+  /* Prevent font size adjustment on mobile */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  
+  /* Enable smooth scrolling */
+  scroll-behavior: smooth;
+}
+
+/* Touch-friendly body */
 body {
-  @apply bg-background text-slate-900;
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-50;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  
+  /* Prevent text selection on long press mobile */
+  -webkit-user-select: text;
+  -webkit-touch-callout: none;
+  
+  /* Optimal line spacing */
+  line-height: 1.6;
+  
+  /* Prevent unwanted zoom on inputs */
+  font-size: 16px;
+  
+  /* Safe area padding for notch devices */
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+}
+
+/* Ensure full-height layout for mobile */
+html,
+body,
+#__next {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  overflow: hidden;
+}
+
+body > div:first-child {
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile-friendly form inputs */
+input,
+textarea,
+select {
+  font-size: 16px; /* Prevent zoom on focus iOS */
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+/* Touch-friendly button sizes (minimum 44x44 for accessibility) */
+button,
+a {
+  min-height: 44px;
+  min-width: 44px;
+  
+  /* Remove tap highlight on Android */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Remove default tap highlight */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS specific fixes */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+}
+
+/* Prevent double-tap zoom on buttons */
+button,
+a[role="button"] {
+  touch-action: manipulation;
+}
+
+/* Safe area for navigation */
+@media (max-height: 500px) {
+  body {
+    font-size: 14px;
+  }
+  
+  button,
+  a {
+    min-height: 40px;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (orientation: landscape) {
+  body {
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Print styles for mobile */
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+  body {
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Mobile-specific utility classes */
+.safe-area-top {
+  padding-top: max(0px, env(safe-area-inset-top));
+}
+
+.safe-area-bottom {
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+}
+
+.safe-area-left {
+  padding-left: max(0px, env(safe-area-inset-left));
+}
+
+.safe-area-right {
+  padding-right: max(0px, env(safe-area-inset-right));
+}
+
+/* Loading animation */
+.pulse-loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
